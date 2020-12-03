@@ -59,6 +59,15 @@ class ChatUser {
     });
   }
 
+  // handle a username change request
+  handleUserChange(newName) {
+    this.room.broadcast({
+      type: 'note',
+      text: `${this.name} is now ${newName}`
+    });
+    this.name = newName;
+  }
+
 
   /** Handle messages from client:
    *
@@ -71,6 +80,7 @@ class ChatUser {
 
     if (msg.type === 'join') this.handleJoin(msg.name);
     else if (msg.type === 'joke') this.handleJoke();
+    else if (msg.type === 'userChange') this.handleUserChange(msg.text);
     else if (msg.type === 'chat') this.handleChat(msg.text);
     else throw new Error(`bad message: ${msg.type}`);
   }

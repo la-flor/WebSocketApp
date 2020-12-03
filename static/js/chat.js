@@ -5,7 +5,7 @@ const roomName = urlParts[urlParts.length - 1];
 const ws = new WebSocket(`ws://localhost:3000/chat/${roomName}`);
 
 
-const name = prompt("Username?");
+let name = prompt("Username?");
 
 
 /** called when connection opens, sends join info to server. */
@@ -55,19 +55,26 @@ ws.onclose = function (evt) {
   console.log("close", evt);
 };
 
-
 /** send message when button pushed. */
 
 $('form').submit(function (evt) {
   evt.preventDefault();
+  const chatInput = $("#m").val();
 
   let type = 'chat';
+  let text = $("#m").val();
 
-  if ($("#m").val().toLowerCase() === '/joke') {
+  if (chatInput === '/joke') {
     type = 'joke';
   }
 
-  let data = {type: type, text: $("#m").val()};
+  if (chatInput.slice(0,5) === '/name') {
+    type = 'userChange';
+    text = chatInput.slice(6);
+    name = chatInput.slice(6);
+  }
+
+  let data = { type, text };
   ws.send(JSON.stringify(data));
 
   $('#m').val('');
